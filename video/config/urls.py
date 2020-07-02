@@ -15,9 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
+from app.client import urls as client_urls
 from app.dashboard import urls as dashbord_urls
-from app.client import client_urls
-
 urlpatterns = [
     path('dashbord/', include(dashbord_urls)),
     path('client/', include(client_urls)),
