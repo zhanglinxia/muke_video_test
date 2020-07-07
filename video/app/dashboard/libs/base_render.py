@@ -1,19 +1,38 @@
-#mymako.py
-from django.template.context import Context
-from django.http import HttpResponse
-from mako.template import Template
-from mako.lookup import TemplateLookup
-from config import settings
-import os
+#base_render.py
+#重写一个render方法
 
-def render_to_response(t,c=None,context_instance=None):
-    path = settings.TEMPLATES[0]['DIRS']
-    mylookup = TemplateLookup(directories=path,output_encoding='utf-8')
-    mako_temp = mylookup.get_template(t)
-    if context_instance:
-        context_instance.update(c)
+from mako.lookup import TemplateLookup      #导入配置文件
+from django.template import RequestContext
+from django.conf import settings
+from django.template.context import Context #导入上下文
+from django.http import HttpResponse
+from django.middleware.csrf import get_token
+
+def render_to_response(request,template,data=None):
+    context_instance = RequestContext(request)  # 创建上下文实例
+    path = settings.TEMPLATES[0]['DIRS'][0]
+    lookup = TemplateLookup(
+        directories=[path],
+        output_encoding='utf-8',    #输出格式
+        input_encoding='utf-8'      #输入格式
+    )
+    mako_template = lookup.get_template(template)
+
+    if not data:
+        data = {}
+
+    if context_instance:                  #如果实例存在就更新数据
+        context_instance.update(data)
     else:
-        context_instance = Context(c)
-    data = {}
-    for d in context_instance:data.update(d)
-    return HttpResponse(mako_temp.render(**data))
+        context_instance = Context(data)      #如果没有则创建实例
+
+    result = {}
+
+    for d in context_instance:
+        result.update(d)
+    print(request)
+    #创建csrf_token
+    token = get_token(request)
+    result['csrf_token'] = '<input type="hidden" name="csrfmiddlewaretoken" value="{0}" />'.format(token)
+    result['request'] = request
+    return HttpResponse(mako_template.render(**result))

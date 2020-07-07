@@ -1,0 +1,113 @@
+<%inherit file='base.html' />
+<%!
+from django.shortcuts import reverse
+from app.model.video import VideoType,NationalityType,FromType
+import datetime
+%>
+<%def name="css()">
+    <link href="/static/dashboard/css/video.css" rel="stylesheet" type="text/css">
+</%def>
+<%def name="title()">
+    站外视频
+</%def>
+<%def name="content()">
+<h1>站外视频</h1>
+<button type="button" class="btn btn-primary open-add-video-btn" id = "open-add-video-btn">创建</button>
+
+${error}
+<form class="form-horizontal edit-area" method="post" action="${reverse('dashboard_video')}" id = "add-video-form">
+    ${csrf_token}
+    <div class="form-group">
+        <label class="col-sm-2 control-label">名称</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="name" placeholder="请输入名称">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">图片</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="image" placeholder="请输入图片">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">视频类型</label>
+        <div class="col-sm-10">
+            <select class="form-control" name="video_type">
+                %for video_type in VideoType:
+                    <option value="${video_type.value}">${video_type.label}</option>
+                %endfor
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">国籍</label>
+        <div class="col-sm-10">
+            <select class="form-control" name="nationality">
+                %for nation_type in NationalityType:
+                    <option value="${nation_type.value}">${nation_type.label}</option>
+                %endfor
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">视频来源</label>
+        <div class="col-sm-10">
+            <select class="form-control" name="from_to">
+                %for from_type in FromType:
+                %if from_type.value != 'customer':
+                    <option value="${from_type.value}">${from_type.label}</option>
+                %endif
+                %endfor
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-2 control-label">简介</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" name="info" rows="3"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">提交</button>
+        </div>
+    </div>
+</form>
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th>名称</th>
+        <th>海报</th>
+        <th>类型</th>
+        <th>来源</th>
+        <td>国籍</td>
+        <td>状态</td>
+        <td>创建时间</td>
+        <td>操作</td>
+    </tr>
+    </thead>
+    % for video in videos:
+    <tbody>
+    <tr>
+        <td>${video.name}</td>
+        <td><img src="${video.image}"/></td>
+        <td>${VideoType[video.video_type].label}</td>
+        <td>${FromType[video.from_to].label}</td>
+        <td>${NationalityType[video.nationality].label}</td>
+        <td>
+            % if video.status == True:
+            可用
+            %else:
+            不可用
+            %endif
+        </td>
+        <td>${video.create_time.strftime("%Y-%m-%d %H:%M:%S")}</td>
+        <td>编辑｜附件</td>
+    </tr>
+    </tbody>
+    % endfor
+</table>
+</%def>
+<%def name="js()">
+<script src="/static/dashboard/js/video.js"></script>
+</%def>

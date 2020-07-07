@@ -1,0 +1,18 @@
+.edit-area {
+    margin: 10% auto;
+    width: 60%;
+    border: solid 1px #cccccc;
+    padding: 5%;
+}
+
+.open-add-video-btn {
+    margin: 10px;
+}
+
+.edit-area {
+    margin: 10px;
+    width: 60%;
+    border: solid 1px #cccccc;
+    padding: 5%;
+    display: none;
+}
