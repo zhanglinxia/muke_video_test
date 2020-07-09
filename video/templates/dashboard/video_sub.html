@@ -1,10 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<%inherit file="base.html"/>
+<%def name="css()">
+<style>
+    .edit-area {
+        margin: 2% auto;
+        width: 60%;
+        border: solid 1px #cccccc;
+        padding: 5%;
+    }
 
-</body>
-</html>
+    span {
+        margin: 2px;
+    }
+</style>
+</%def>
+<%!
+from app.model.video import NationalityType,RoleType
+from django.shortcuts import reverse
+%>
+<%def name="content()">
+<h1>${video.name}</h1>
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th>演员</th>
+        <th>角色</th>
+    </tr>
+    </thead>
+    % for star in video.video_stars.all():
+    <tbody>
+    <tr>
+        <td>${star.name}</td>
+        <td>${RoleType[star.role].label}</td>
+    </tr>
+    </tbody>
+    % endfor
+</table>
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th>集数</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    % for video_sub in video.vedeo_subs.all():
+    <tbody>
+    <tr>
+        <td>${video_sub.number}</td>
+        <td><a href="${video_sub.url}">查看</a></td>
+    </tr>
+    </tbody>
+    % endfor
+</table>
+<form class="form-inline edit-area" action="${reverse('dashboard_video_star')}" method="post">
+    ${csrf_token}
+    <input type="hidden" value="${video.id}" name="video_id" />
+    <div class="form-group">
+        <label>演员</label>
+        <input type="text" class="form-control" name="starName" placeholder="">
+    </div>
+    <div class="form-group">
+        <label>角色</label>
+        <select class="form-control" name="role">
+            %for role_type in RoleType:
+            <option value="${role_type.value}">${role_type.label}</option>
+            %endfor
+        </select>
+    </div>
+    <input type="submit" class="btn btn-info" value="添加">
+</form>
+<form class="form-inline edit-area" action="${reverse('dashboard_video_sub',kwargs={'video_id':video.id})}" method="post">
+    ${csrf_token}
+    <div class="form-group">
+        <label>集数</label>
+        <input type="number" class="form-control" name="number" placeholder="">
+    </div>
+    <div class="form-group">
+        <label>地址</label>
+        <input type="text" class="form-control" name="url" placeholder="">
+    </div>
+    <input type="submit" class="btn btn-info" value="添加">
+</form>
+</%def>
+<%def name="js()">
+</%def>

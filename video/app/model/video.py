@@ -36,6 +36,15 @@ FromType.youku.label = '优酷'
 FromType.tencent.label = '腾讯'
 FromType.customr.label = '站内'
 
+class RoleType(Enum):
+    leading = 'leading'
+    supporting = 'supporting'
+    actor = 'actor'
+RoleType.leading.label = '主角'
+RoleType.supporting.label = '配角'
+RoleType.actor.label = '导演'
+
+
 class Video(models.Model):
     name = models.CharField(max_length=50)
     image = models.CharField(max_length=300)
@@ -60,6 +69,7 @@ class VideoStar(models.Model):
         null = True,
         on_delete=models.SET_NULL,blank=True
     )
+    role = models.CharField(max_length=20,default='')
     name = models.CharField(max_length=100)
     identify = models.CharField(max_length=50,default='')
 

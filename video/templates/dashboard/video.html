@@ -102,7 +102,9 @@ ${error}
             %endif
         </td>
         <td>${video.create_time.strftime("%Y-%m-%d %H:%M:%S")}</td>
-        <td>编辑｜附件</td>
+        <td>
+            <a href="${reverse('dashboard_video_update',kwargs={'video_id':video.id})}" >编辑</a>｜
+            <a href="${reverse('dashboard_video_sub',kwargs={'video_id':video.id}) }">附件</a></td>
     </tr>
     </tbody>
     % endfor
